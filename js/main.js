@@ -4,5 +4,4 @@ function viewModel() {
         this.listIsVisible(!this.listIsVisible());
     };
 }
-
 ko.applyBindings(viewModel);
