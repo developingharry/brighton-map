@@ -3,42 +3,49 @@ var locations = [
         name: 'Red Roaster',
         lat: 50.821149,
         lng: -0.1361460000000534,
+        category: 'coffeebar';
         icon: 'images/coffee.png'
     },
     {
         name: 'La Mucca Nera',
         lat: 50.8207471,
         lng: -0.13421779999998762,
+        category: 'coffeebar';
         icon: 'images/coffee.png'
     },
     {
         name: 'Starbucks',
         lat: 50.820873,
         lng: -0.13498470000001817,
+        category: 'coffeebar';
         icon: 'images/coffee.png'
     },
     {
         name: 'Twin Pines',
         lat: 50.8210438,
         lng: -0.13516649999996844,
+        category: 'coffeebar';
         icon: 'images/'
     },
     {
         name: 'Block',
         lat: 50.820647,
         lng: -0.13360199999999622,
+        category: 'bar',
         icon: 'images/beer.png'
     },
     {
         name: 'The Queens Arms',
         lat: 50.8213051,
         lng: -0.134762099999989,
+        category: 'bar',
         icon: 'images/beer.png'
     },
     {
         name: 'The Ranelagh',
         lat: 50.8216432,
         lng: -0.13242930000001252,
+        category: 'bar',
         icon: 'images/beer.png'
     },
 
@@ -68,6 +75,11 @@ var ViewModel = function() {
     //create map variable outside mapload function
     //so that it can also be used by marker function.
     var map;
+
+    this.listIsVisible = ko.observable(false);
+    toggleList = function() {
+        this.listIsVisible(!this.listIsVisible());
+    };
 
     this.loadMap = function() {
         $.getScript(mapScript)
