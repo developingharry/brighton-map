@@ -3,56 +3,63 @@ var locations = [
         name: 'Red Roaster',
         lat: 50.821149,
         lng: -0.1361460000000534,
-        category: 'coffeebar';
-        icon: 'images/coffee.png'
+        category: 'coffeebar',
+        icon: 'images/coffee.png',
+        index:0
     },
     {
         name: 'La Mucca Nera',
         lat: 50.8207471,
         lng: -0.13421779999998762,
-        category: 'coffeebar';
-        icon: 'images/coffee.png'
+        category: 'coffeebar',
+        icon: 'images/coffee.png',
+        index: 1
     },
     {
         name: 'Starbucks',
         lat: 50.820873,
         lng: -0.13498470000001817,
-        category: 'coffeebar';
-        icon: 'images/coffee.png'
+        category: 'coffeebar',
+        icon: 'images/coffee.png',
+        index: 2
     },
     {
         name: 'Twin Pines',
         lat: 50.8210438,
         lng: -0.13516649999996844,
-        category: 'coffeebar';
-        icon: 'images/'
+        category: 'coffeebar',
+        icon: 'images/',
+        index: 3,
     },
     {
         name: 'Block',
         lat: 50.820647,
         lng: -0.13360199999999622,
         category: 'bar',
-        icon: 'images/beer.png'
+        icon: 'images/beer.png',
+        index: 4
     },
     {
         name: 'The Queens Arms',
         lat: 50.8213051,
         lng: -0.134762099999989,
         category: 'bar',
-        icon: 'images/beer.png'
+        icon: 'images/beer.png',
+        index: 5
     },
     {
         name: 'The Ranelagh',
         lat: 50.8216432,
         lng: -0.13242930000001252,
         category: 'bar',
-        icon: 'images/beer.png'
+        icon: 'images/beer.png',
+        index: 6
     },
 
 ];
 
-var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
-
+var markers = [];
+var infoWindows = [];
 var mapScript = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCRZhDuPRPkI-pUsZ30M-0H4yoXiIy2Nss&format=png+maptype=roadmap&style=feature:poi%7Cvisibility:off";
 
 // Initial zoom for the map, latitude and longitude for the center.
@@ -76,11 +83,22 @@ var ViewModel = function() {
     //so that it can also be used by marker function.
     var map;
 
+    //initially hide list pane
     this.listIsVisible = ko.observable(false);
+
+    //function to reveal list, triggered by click
     toggleList = function() {
         this.listIsVisible(!this.listIsVisible());
     };
 
+    //work in progress - toggles markers on click ok, but doesn't close their infoWindows
+    toggleMarker = function() {
+      var markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
+      markers[this.index].setVisible(markerVisibility);
+      console.log(this.index);
+    };
+
+    //initial map loading function
     this.loadMap = function() {
         $.getScript(mapScript)
             //if the google maps api loads, draw map
@@ -94,19 +112,45 @@ var ViewModel = function() {
                     mapTypeControl: mapSettings.mapTypeControl,
                     styles: mapSettings.styles
                 });
+
                 //also draw a marker for each place in the array
                 locations.forEach(function(element) {
-                  console.log(element.name);
-                  var marker = new google.maps.Marker({
-                    position: {lat:element.lat,lng:element.lng},
-                    map: map,
-                    title: element.name,
-                    icon: element.icon
-                  });
-                  return marker;
+                    console.log(element.name);
+                    var marker = new google.maps.Marker({
+                        position: {
+                            lat: element.lat,
+                            lng: element.lng
+                        },
+                        map: map,
+                        title: element.name,
+                        icon: element.icon
+                    });
+                    google.maps.event.addListener(marker, 'click', function() {
+                        //close other windows if necessary
+                        infowindow.close();
+                        //set infowindow contents
+                        infowindow.setContent("this is placeholder info");
+                        //open infowindow
+                        infowindow.open(map, marker);
+                        //bounce
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                        //stop bouncing one animation cycle later
+                        setTimeout(function(){marker.setAnimation(null);
+                        }, 750);
+                    });
+                    markers.push(marker);
+                });
+                var infowindow = new google.maps.InfoWindow();
+
+                //finally we'll set up the InfoWindows.
+                locations.forEach(function(element) {
+                    var infoPanel = new google.maps.InfoWindow({
+                        content: location.category
+                    });
+                    infoWindows.push(infoPanel);
                 });
 
-            //if the google maps api fails to load, alert user
+                //if the google maps api fails to load, alert user
             }).fail(function() {
                 alert('The Google Maps API has failed to load.  Please try again later.');
             });

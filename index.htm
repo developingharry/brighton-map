@@ -16,7 +16,7 @@
             <div id="navpane">
                 <div class="nav-item" data-bind="if: listIsVisible">
                     <div data-bind="foreach: locations">
-                    <div class="nav-item" data-bind="text: name"></div>
+                    <div class="nav-item" data-bind="click: toggleMarker, attr: {id:$index()}, text: name"></div>
                   </div>
                 </div>
                 <button class="nav-item" data-bind="click: toggleList">Click to filter</button>
