@@ -1,3 +1,9 @@
+
+
+
+
+
+
 // Call the Google Maps API, and when loaded, load up the map
 $.getScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyCRZhDuPRPkI-pUsZ30M-0H4yoXiIy2Nss&format=png+maptype=roadmap&style=feature:poi%7Cvisibility:off', function() {
     var myStyles =[
@@ -20,17 +26,22 @@ $.getScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyCRZhDuPRPkI-pUsZ3
         styles: myStyles
     });
 
-    var redRoasterCoords = new google.maps.LatLng(50.821149,-0.1361460000000534);
-    var redRoaster = new google.maps.Marker({
-    position : redRoasterCoords,
-    title:"Red Roaster"
-    });
+    var locations = [
+      ['Red Roaster', 50.821149, -0.1361460000000534],
+      ['La Mucca Nera', 50.8207471, -0.13421779999998762],
+      ['Starbucks', 50.820873, -0.13498470000001817]
+    ];
 
-    var laMuccaNeraCoords = new google.maps.LatLng(50.8207471,-0.13421779999998762);
-    var laMuccaNera = new google.maps.Marker({
-    position : laMuccaNeraCoords,
-    title:"La Mucca Nera"
-    });
-redRoaster.setMap(map);
-laMuccaNera.setMap(map);
+    function addMarkers(map) {
+      for (var i = 0; i < locations.length; i++) {
+        var location = locations[i];
+        console.log(location);
+        var marker = new google.maps.Marker({
+          position: {lat:location[1],lng:location[2]},
+          map:map,
+          title: location[0]
+        });
+      }
+    }
+    addMarkers(map);
 });
