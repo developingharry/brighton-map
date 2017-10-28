@@ -3,20 +3,45 @@ var locations = [
         name: 'Red Roaster',
         lat: 50.821149,
         lng: -0.1361460000000534,
-        icon: 'parking_lot_maps.png'
+        icon: 'images/coffee.png'
     },
     {
         name: 'La Mucca Nera',
         lat: 50.8207471,
         lng: -0.13421779999998762,
-        icon: 'parking_lot_maps.png'
+        icon: 'images/coffee.png'
     },
     {
-        name: 'Red Roaster',
+        name: 'Starbucks',
         lat: 50.820873,
         lng: -0.13498470000001817,
-        icon: 'parking_lot_maps.png'
-    }
+        icon: 'images/coffee.png'
+    },
+    {
+        name: 'Twin Pines',
+        lat: 50.8210438,
+        lng: -0.13516649999996844,
+        icon: 'images/'
+    },
+    {
+        name: 'Block',
+        lat: 50.820647,
+        lng: -0.13360199999999622,
+        icon: 'images/beer.png'
+    },
+    {
+        name: 'The Queens Arms',
+        lat: 50.8213051,
+        lng: -0.134762099999989,
+        icon: 'images/beer.png'
+    },
+    {
+        name: 'The Ranelagh',
+        lat: 50.8216432,
+        lng: -0.13242930000001252,
+        icon: 'images/beer.png'
+    },
+
 ];
 
 var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
@@ -25,8 +50,8 @@ var mapScript = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCRZhDuPRPkI-p
 
 // Initial zoom for the map, latitude and longitude for the center.
 var mapSettings = {
-    lat: 50.8207025,
-    lng: -0.1353432,
+    lat: 50.8212148,
+    lng: -0.13406340000005912,
     zoom: 18,
     //this last setting hides the option to change layers
     //(map/satellite). This was an aesthetic choice for
@@ -64,7 +89,7 @@ var ViewModel = function() {
                     position: {lat:element.lat,lng:element.lng},
                     map: map,
                     title: element.name,
-                    icon: iconBase + element.icon
+                    icon: element.icon
                   });
                   return marker;
                 });
