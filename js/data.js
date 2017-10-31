@@ -5,7 +5,9 @@ var locations = [
         lng: -0.1361460000000534,
         category: 'coffeebar',
         icon: 'images/coffee.png',
-        infoPanel:'boob',
+        index:0,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'La Mucca Nera',
@@ -13,7 +15,9 @@ var locations = [
         lng: -0.13421779999998762,
         category: 'coffeebar',
         icon: 'images/coffee.png',
-        infoPanel:'boob2',
+        index: 1,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'Starbucks',
@@ -21,7 +25,9 @@ var locations = [
         lng: -0.13498470000001817,
         category: 'coffeebar',
         icon: 'images/coffee.png',
-        infoPanel:'boob22',
+        index: 2,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'Twin Pines',
@@ -29,7 +35,9 @@ var locations = [
         lng: -0.13516649999996844,
         category: 'coffeebar',
         icon: 'images/coffee.png',
-        infoPanel:'bossb',
+        index: 3,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'Block',
@@ -37,7 +45,9 @@ var locations = [
         lng: -0.13360199999999622,
         category: 'bar',
         icon: 'images/beer.png',
-        infoPanel:'boossb',
+        index: 4,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'The Queens Arms',
@@ -45,7 +55,9 @@ var locations = [
         lng: -0.134762099999989,
         category: 'bar',
         icon: 'images/beer.png',
-        infoPanel:'bsdoob',
+        index: 5,
+        marker:[],
+        infoPanel:[]
     },
     {
         name: 'The Ranelagh',
@@ -53,15 +65,13 @@ var locations = [
         lng: -0.13242930000001252,
         category: 'bar',
         icon: 'images/beer.png',
-        infoPanel:'bosdob',
+        index: 6,
+        marker:[],
+        infoPanel:[]
     },
+
 ];
 
-var bars = [];
-var coffeebars = [];
-var infowindow;
-var map;
-var marker;
 var markers = [];
 var mapScript = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCRZhDuPRPkI-pUsZ30M-0H4yoXiIy2Nss&format=png+maptype=roadmap&style=feature:poi%7Cvisibility:off";
 
@@ -83,120 +93,101 @@ var mapSettings = {
 //so that it can also be used by marker function.
 var map;
 
+var Menu = function(data) {};
 
 var ViewModel = function() {
+
+
     //initially hide list pane
-    listIsVisible = ko.observable(false);
-
-    toggleCategory = function() {
-
-    };
-
-
-    filterLocs = function() {
-      let index = 0;
-      for(var i = 0; i < locations.length; i++) {
-        if(locations[i].category == 'bar') {
-          locations[i].index = index;
-          index++;
-          bars.push(locations[i]);
-        } else if (locations[i].category == 'coffeebar') {
-          locations[i].index = index;
-          index++;
-          coffeebars.push(locations[i]);
-        }
-      }
-    };
+    this.listIsVisible = ko.observable(false);
 
     //function to reveal list, triggered by click
     toggleList = function() {
-        infowindow.close();
-        listIsVisible(!listIsVisible());
+        this.listIsVisible(!this.listIsVisible());
     };
 
     //work in progress - toggles markers on click ok, but doesn't close their infoWindows
     toggleMarker = function() {
-      infowindow.close();
       var markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
       markers[this.index].setVisible(markerVisibility);
       console.log(this.index);
     };
 
-    startup = function() {
-      $.getScript(mapScript)
-        .done(function() {
-          console.log('trying to initialise map');
-          self.initMap();
-          self.filterLocs();
-          console.log('trying to add markers');
-          self.addMarkers();
-          console.log('trying to add windows');
-          self.addWindows();
-        })
-      .fail(function() {
-        alert('Apologies, dear user, there appears to be a problem loading the Google Maps API.\n\nPlease try again later.');
-      });
+    // toggleInfopanel = function() {
+    //   var
+    // }
+
+    //initial map loading function
+    this.loadMap = function() {
+        $.getScript(mapScript)
+            //if the google maps api loads, draw map
+            .done(function() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {
+                        lat: mapSettings.lat,
+                        lng: mapSettings.lng
+                    },
+                    zoom: mapSettings.zoom,
+                    mapTypeControl: mapSettings.mapTypeControl,
+                    styles: mapSettings.styles
+                });
+
+                //also draw a marker for each place in the array
+                locations.forEach(function(element) {
+                    console.log(element.name);
+                    var marker = new google.maps.Marker({
+                        position: {
+                            lat: element.lat,
+                            lng: element.lng
+                        },
+                        map: map,
+                        title: element.name,
+                        icon: element.icon
+                    });
+
+                    //also add listeners for animation and infoWIndow display
+                    google.maps.event.addListener(marker, 'click', function() {
+                        //close other windows if necessary
+                        infowindow.close();
+                        //set infowindow contents
+                        infowindow.setContent("this is placeholder info");
+                        //open infowindow
+                        infowindow.open(map, marker);
+                        //bounce
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                        //stop bouncing one animation cycle later
+                        setTimeout(function(){marker.setAnimation(null);
+                        }, 750);
+                    });
+                    var navObj = $('.navObj');
+                    google.maps.event.addDomListener(navObj, 'click', function(){alert('hello');});
+
+                    markers.push(marker);
+                    element.marker=marker;
+                    console.log(element);
+                });
+                var infowindow = new google.maps.InfoWindow();
+
+                //finally we'll set up the InfoWindows.
+                locations.forEach(function(element) {
+                    var infoPanel = new google.maps.InfoWindow({
+                        content: location.category
+                    });
+                    element.infoPanel=infoPanel;
+                });
+
+                //if the google maps api fails to load, alert user
+            }).fail(function() {
+                alert('The Google Maps API has failed to load.  Please try again later.');
+            });
     };
 
-    initMap = function() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-          lat: mapSettings.lat,
-          lng: mapSettings.lng
-        },
-        zoom: mapSettings.zoom,
-        mapTypeControl: mapSettings.mapTypeControl,
-        styles: mapSettings.styles
-      });
-    };
+    //call the map load function
+    //note: I wasn't sure if it was best practice to
+    //call the function here, or outside the ViewModel
+    //when I apply the Bindings.
+    this.loadMap();
 
-    addMarkers = function() {
-      locations.forEach(function(element){
-        //pulls all the data for the markers
-        //from the locations array.  this
-        //works fine
-        marker = new google.maps.Marker({
-          position: {
-            lat: element.lat,
-            lng: element.lng
-          },
-          map: map,
-          title: element.name,
-          icon: element.icon,
-          info: element.infoPanel
-        });
-        markers.push(marker);
-      });
-    };
-    addWindows = function() {
-    infowindow = new google.maps.InfoWindow({
-      content: "placeholder content..."
-    });
-
-    for (var i = 0; i < markers.length; i++) {
-      var marker = markers[i];
-      google.maps.event.addListener(marker, 'click', function() {
-        infowindow.setContent(this.info);
-        infowindow.open(map,this);
-      });
-    }
-  };
-
-
-    // addWindows = function() {
-    //   markers.forEach(function(element){
-    //     var infowindow = new google.maps.InfoWindow();
-    //     var content = 'hello';
-    //     element.addListener('click', function(marker,content,infowindow){
-    //       return function() {
-    //         infowindow.setConent(content);
-    //         infowindow.open(map,marker);
-    //       };
-    //     })(marker,content,infowindow);
-    //   });
-    // };
-//end of ViewModel
-startup();
 };
 
 ko.applyBindings(new ViewModel());
