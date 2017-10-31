@@ -58,7 +58,7 @@ var locations = [
 ];
 
 var bars = [];
-var coffeebars = [];
+var cafes = [];
 var infowindow;
 var map;
 var marker;
@@ -84,12 +84,24 @@ var mapSettings = {
 var map;
 
 
+
 var ViewModel = function() {
+
+    showBars = ko.observable(true);
+    showCafes = ko.observable(true);
     //initially hide list pane
     listIsVisible = ko.observable(false);
 
-    toggleCategory = function() {
+    toggleBars = function() {
+      console.log('trying to toggle bars');
+      showBars(!showBars());
+      toggleMarkerCategory('bar');
+    };
 
+    toggleCafes = function() {
+      console.log('toggling Cafes');
+      showCafes(!showCafes());
+      toggleMarkerCategory('coffeebar');
     };
 
 
@@ -103,7 +115,7 @@ var ViewModel = function() {
         } else if (locations[i].category == 'coffeebar') {
           locations[i].index = index;
           index++;
-          coffeebars.push(locations[i]);
+          cafes.push(locations[i]);
         }
       }
     };
@@ -117,11 +129,21 @@ var ViewModel = function() {
     //work in progress - toggles markers on click ok, but doesn't close their infoWindows
     toggleMarker = function() {
       infowindow.close();
-      var markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
+      let markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
       markers[this.index].setVisible(markerVisibility);
       console.log(this.index);
     };
 
+    toggleMarkerCategory = function(category) {
+
+      for(var i = 0; i<markers.length; i++) {
+          let markerVisibility = (markers[i].getVisible() == true) ?  false : true;
+          console.log (markers[i].category);
+          if(locations[i].category == category) {
+            markers[i].setVisible(markerVisibility);
+          }
+      }
+    };
     startup = function() {
       $.getScript(mapScript)
         .done(function() {

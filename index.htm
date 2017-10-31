@@ -15,19 +15,27 @@
         <div class="container">
             <div id="navpane">
                 <div class="nav-item" data-bind="if: listIsVisible">
+                    <b class = "manu-header">Locations</b>
+                    <div class ="category" data-bind = "visible: showBars">Bars</div>
                     <div data-bind="foreach: bars">
-                      <div class="navObj" data-bind="click: toggleMarker, text: name"></div>
+                      <div class="navObj" data-bind="visible: showBars, click: toggleMarker, text: name"></div>
                     </div>
-                    <div data-bind="foreach: coffeebars">
-                      <div class="navObj" data-bind="click: toggleMarker, text: name"></div>
+                    <div class ="category" data-bind = "visible: showCafes">Cafes</div>
+                    <div data-bind="foreach: cafes">
+                      <div class="navObj" data-bind="visible: showCafes, click: toggleMarker, text: name"></div>
                     </div>
-                  <button class = "nav-item">pubs</button>
-                  <button class = "nav-item">cafes</button>
+                    <hr>
+                    <div class = "button-header">Toggles</div>
+                  <button  class = "nav-item" data-bind = "click: toggleBars">Bars</button>
+                  <button  class = "nav-item" data-bind = "click: toggleCafes">Cafes</button>
+                  <hr>
                 </div>
-                <button class="nav-item" data-bind="click: toggleList">Click to filter</button>
+                <div class = "button-header">
+                  <button class="nav-item button-header" data-bind="click: toggleList">Show/Hide Menu</button>
+                </div>
             </div>
             <div id="map"></div>
         </div>
-        <script type='text/javascript' src='js/main2.js'></script>
+        <script type='text/javascript' src='js/main.js'></script>
     </body>
 </html>
