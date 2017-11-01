@@ -25,7 +25,6 @@ var mapSettings = {
 var map;
 var infowindow;
 
-
 var ViewModel = function() {
 
     showBars = ko.observable(true);
@@ -94,7 +93,6 @@ var ViewModel = function() {
           console.log('trying to add markers');
           self.addMarkers();
           infowindow = new google.maps.InfoWindow();
-
           console.log('trying to add windows');
         })
       .fail(function() {
@@ -121,9 +119,10 @@ var ViewModel = function() {
         map : map,
         icon : icon
       });
+      fetchVenueData(id);
       google.maps.event.addListener(marker, 'click', function(){
         infowindow.close(); // Close previously opened infowindow
-        infowindow.setContent(id);
+        infowindow.setContent(infoWindowContent());
         infowindow.open(map, marker);
       });
     };
@@ -133,53 +132,33 @@ var ViewModel = function() {
         makeMarker(locations[i], locations[i].icon, locations[i].venue_id);
       }
     };
+    var infoWindowContent = ko.observable('if you can see this I messed up');
 
-    // addMarkers = function() {
-    //   locations.forEach(function(element){
-    //     //pulls all the data for the markers
-    //     //from the locations array.  this
-    //     //works fine
-    //     marker = new google.maps.Marker({
-    //       position: {
-    //         lat: element.lat,
-    //         lng: element.lng
-    //       },
-    //       map: map,
-    //       title: element.name,
-    //       icon: element.icon,
-    //       info: element.infoPanel
-    //     });
-    //     markers.push(marker);
-    //   });
-    // };
-
-  //   addWindows = function() {
-  //   infowindow = new google.maps.InfoWindow({
-  //     content: "placeholder content..."
-  //   });
-  //
-  //   for (var i = 0; i < markers.length; i++) {
-  //     var marker = markers[i];
-  //     google.maps.event.addListener(marker, 'click', function() {
-  //       infowindow.setContent(this.info);
-  //       infowindow.open(map,this);
-  //     });
-  //   }
-  // };
-
-
-    // addWindows = function() {
-    //   markers.forEach(function(element){
-    //     var infowindow = new google.maps.InfoWindow();
-    //     var content = 'hello';
-    //     element.addListener('click', function(marker,content,infowindow){
-    //       return function() {
-    //         infowindow.setConent(content);
-    //         infowindow.open(map,marker);
-    //       };
-    //     })(marker,content,infowindow);
-    //   });
-    // };
+    fetchVenueData = function(id) {
+      const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
+      const fsqVenueId = id;
+      const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
+      const url = fsqPrefix + fsqVenueId + fsqSuffix;
+      fetch(url)
+        .then((resp) => resp.json())
+        .then(function(data) {
+          const d = data.response.venue;
+          const fsqName = d.name;
+          const fsqHours = d.hours.status;
+          const fsqCategory = d.categories[0].name;
+          const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
+          const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + twitterLogo + '</a>';
+          const fsqTags = d.tags;
+          const fsq_urlStart = '<a href = "' + d.url + '">';
+          const fsq_urlEnd = '</a>';
+          const br = '<br>';
+          infoWindowContent('' + fsqTags + '');
+          console.log(fsqTags);
+          // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
+          // $('.nameHere').append(fsqCategory + br);
+          // $('.nameHere').append(fsqHours + br + fsqTags);
+        });
+    };
 //end of ViewModel
 startup();
 };
