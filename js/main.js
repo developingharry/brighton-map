@@ -1,62 +1,3 @@
-var locations = [
-    {
-        name: 'Red Roaster',
-        lat: 50.821149,
-        lng: -0.1361460000000534,
-        category: 'coffeebar',
-        icon: 'images/coffee.png',
-        infoPanel:'boob',
-    },
-    {
-        name: 'La Mucca Nera',
-        lat: 50.8207471,
-        lng: -0.13421779999998762,
-        category: 'coffeebar',
-        icon: 'images/coffee.png',
-        infoPanel:'boob2',
-    },
-    {
-        name: 'Starbucks',
-        lat: 50.820873,
-        lng: -0.13498470000001817,
-        category: 'coffeebar',
-        icon: 'images/coffee.png',
-        infoPanel:'boob22',
-    },
-    {
-        name: 'Twin Pines',
-        lat: 50.8210438,
-        lng: -0.13516649999996844,
-        category: 'coffeebar',
-        icon: 'images/coffee.png',
-        infoPanel:'bossb',
-    },
-    {
-        name: 'Block',
-        lat: 50.820647,
-        lng: -0.13360199999999622,
-        category: 'bar',
-        icon: 'images/beer.png',
-        infoPanel:'boossb',
-    },
-    {
-        name: 'The Queens Arms',
-        lat: 50.8213051,
-        lng: -0.134762099999989,
-        category: 'bar',
-        icon: 'images/beer.png',
-        infoPanel:'bsdoob',
-    },
-    {
-        name: 'The Ranelagh',
-        lat: 50.8216432,
-        lng: -0.13242930000001252,
-        category: 'bar',
-        icon: 'images/beer.png',
-        infoPanel:'bosdob',
-    },
-];
-
 var bars = [];
 var cafes = [];
 var infowindow;
@@ -82,7 +23,7 @@ var mapSettings = {
 //create map variable outside mapload function
 //so that it can also be used by marker function.
 var map;
-
+var infowindow;
 
 
 var ViewModel = function() {
@@ -152,8 +93,9 @@ var ViewModel = function() {
           self.filterLocs();
           console.log('trying to add markers');
           self.addMarkers();
+          infowindow = new google.maps.InfoWindow();
+
           console.log('trying to add windows');
-          self.addWindows();
         })
       .fail(function() {
         alert('Apologies, dear user, there appears to be a problem loading the Google Maps API.\n\nPlease try again later.');
@@ -172,37 +114,58 @@ var ViewModel = function() {
       });
     };
 
-    addMarkers = function() {
-      locations.forEach(function(element){
-        //pulls all the data for the markers
-        //from the locations array.  this
-        //works fine
-        marker = new google.maps.Marker({
-          position: {
-            lat: element.lat,
-            lng: element.lng
-          },
-          map: map,
-          title: element.name,
-          icon: element.icon,
-          info: element.infoPanel
-        });
-        markers.push(marker);
+    makeMarker = function(loc,icon,id) {
+      var latLng = new google.maps.LatLng(loc.lat, loc.lng);
+      var marker = new google.maps.Marker({
+        position : latLng,
+        map : map,
+        icon : icon
+      });
+      google.maps.event.addListener(marker, 'click', function(){
+        infowindow.close(); // Close previously opened infowindow
+        infowindow.setContent(id);
+        infowindow.open(map, marker);
       });
     };
-    addWindows = function() {
-    infowindow = new google.maps.InfoWindow({
-      content: "placeholder content..."
-    });
 
-    for (var i = 0; i < markers.length; i++) {
-      var marker = markers[i];
-      google.maps.event.addListener(marker, 'click', function() {
-        infowindow.setContent(this.info);
-        infowindow.open(map,this);
-      });
-    }
-  };
+    addMarkers = function() {
+      for(var i=0; i<locations.length; i++) {
+        makeMarker(locations[i], locations[i].icon, locations[i].venue_id);
+      }
+    };
+
+    // addMarkers = function() {
+    //   locations.forEach(function(element){
+    //     //pulls all the data for the markers
+    //     //from the locations array.  this
+    //     //works fine
+    //     marker = new google.maps.Marker({
+    //       position: {
+    //         lat: element.lat,
+    //         lng: element.lng
+    //       },
+    //       map: map,
+    //       title: element.name,
+    //       icon: element.icon,
+    //       info: element.infoPanel
+    //     });
+    //     markers.push(marker);
+    //   });
+    // };
+
+  //   addWindows = function() {
+  //   infowindow = new google.maps.InfoWindow({
+  //     content: "placeholder content..."
+  //   });
+  //
+  //   for (var i = 0; i < markers.length; i++) {
+  //     var marker = markers[i];
+  //     google.maps.event.addListener(marker, 'click', function() {
+  //       infowindow.setContent(this.info);
+  //       infowindow.open(map,this);
+  //     });
+  //   }
+  // };
 
 
     // addWindows = function() {
