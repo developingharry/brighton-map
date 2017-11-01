@@ -5,7 +5,7 @@ var locations = [{
         category: 'coffeebar',
         icon: 'images/coffee.png',
         index: 0,
-        venue_id: '4bdee4f3ffdec9289dfbe9a1'
+        venue_id: '4af2d5d9f964a520ace821e3'
     },
     {
         name: 'La Mucca Nera',
@@ -14,7 +14,7 @@ var locations = [{
         category: 'coffeebar',
         icon: 'images/coffee.png',
         index: 1,
-        venue_id: '4bdee4f3ffdec9289dfbe9a1'
+        venue_id: '594ec911a4b51b7d05625281'
     },
     {
         name: 'Starbucks',
@@ -32,7 +32,7 @@ var locations = [{
         category: 'coffeebar',
         icon: 'images/coffee.png',
         index: 3,
-        venue_id: 'gubs'
+        venue_id: '5786172f498ee0af6e8ff2e9',
     },
     {
         name: 'Block',
@@ -41,7 +41,7 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 4,
-        venue_id: 'sugs'
+        venue_id: '599f3d32f96b2c3468b565d5',
     },
     {
         name: 'The Queens Arms',
@@ -50,7 +50,7 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 5,
-        venue_id: '4bdee4f3ffdec9289dfbe9a1'
+        venue_id: '5766c9f2498e0e981c1327f9',
     },
     {
         name: 'The Ranelagh',
@@ -59,6 +59,6 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 6,
-        venue_id: '4bdee4f3ffdec9289dfbe9a1'
+        venue_id: '4bb4e276f1b976b0907c1f20',
     },
 ];

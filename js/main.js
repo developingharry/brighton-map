@@ -26,7 +26,7 @@ var map;
 var infowindow;
 
 var ViewModel = function() {
-
+    var self = this;
     showBars = ko.observable(true);
     showCafes = ko.observable(true);
     //initially hide list pane
@@ -88,10 +88,10 @@ var ViewModel = function() {
       $.getScript(mapScript)
         .done(function() {
           console.log('trying to initialise map');
-          self.initMap();
-          self.filterLocs();
+          initMap();
+          filterLocs();
           console.log('trying to add markers');
-          self.addMarkers();
+          addMarkers();
           infowindow = new google.maps.InfoWindow();
           console.log('trying to add windows');
         })
@@ -119,10 +119,11 @@ var ViewModel = function() {
         map : map,
         icon : icon
       });
-      fetchVenueData(id);
+
+      markers.push(marker);
       google.maps.event.addListener(marker, 'click', function(){
         infowindow.close(); // Close previously opened infowindow
-        infowindow.setContent(infoWindowContent());
+        infowindow.setContent(showData(id));
         infowindow.open(map, marker);
       });
     };
@@ -134,6 +135,12 @@ var ViewModel = function() {
     };
     var infoWindowContent = ko.observable('if you can see this I messed up');
 
+    showData = function(id) {
+      this.fetchVenueData(id).then(function(data){
+        return data.response.venue;
+      });
+    };
+
     fetchVenueData = function(id) {
       const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
       const fsqVenueId = id;
@@ -142,23 +149,29 @@ var ViewModel = function() {
       fetch(url)
         .then((resp) => resp.json())
         .then(function(data) {
+          console.log(data);
           const d = data.response.venue;
           const fsqName = d.name;
-          const fsqHours = d.hours.status;
+          // const fsqHours = d.hours.status;
           const fsqCategory = d.categories[0].name;
           const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
-          const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + twitterLogo + '</a>';
+          const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + d.name + '</a>';
           const fsqTags = d.tags;
           const fsq_urlStart = '<a href = "' + d.url + '">';
           const fsq_urlEnd = '</a>';
           const br = '<br>';
-          infoWindowContent('' + fsqTags + '');
-          console.log(fsqTags);
+          infoWindowContent('' + fsqTwitter + '');
+          console.log("the tags for" + fsqName + "are"  + fsqTags);
           // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
           // $('.nameHere').append(fsqCategory + br);
           // $('.nameHere').append(fsqHours + br + fsqTags);
-        });
+          console.log(d.name);
+          return data;
+        })
+        .catch(error => console.warn(error));
     };
+
+
 //end of ViewModel
 startup();
 };
