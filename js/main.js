@@ -119,11 +119,11 @@ var ViewModel = function() {
         map : map,
         icon : icon
       });
-
       markers.push(marker);
       google.maps.event.addListener(marker, 'click', function(){
+        infowindow.setContent('loading info...');
+        fetchVenueData(id);
         infowindow.close(); // Close previously opened infowindow
-        infowindow.setContent(showData(id));
         infowindow.open(map, marker);
       });
     };
@@ -135,41 +135,65 @@ var ViewModel = function() {
     };
     var infoWindowContent = ko.observable('if you can see this I messed up');
 
-    showData = function(id) {
-      this.fetchVenueData(id).then(function(data){
-        return data.response.venue;
+    fetchVenueData = function(id) {
+      const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
+      const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
+      const url = fsqPrefix + id + fsqSuffix;
+      fetch(url).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+        const d = data.response.venue;
+        const fsq_urlStart = '<a href = "' + d.url + '">';
+        const fsqName = d.name;
+        const fsq_urlEnd = '</a>';
+        const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
+        const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + twitterLogo + '</a>';
+        const fsqCategory = d.categories[0].name;
+        // const fsqTags = d.tags;
+        const br = '<br>';
+        //       // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
+        //       // $('.nameHere').append(fsqCategory + br);
+        //       // $('.nameHere').append(fsqHours + br + fsqTags);
+        // newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br + fsqCategory + br + fsqHours + br + fsqTags;
+        newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br;
+        infowindow.setContent(newInfo);
+        console.log(d);
+      }).catch(function() {
+        console.log("Booo");
       });
     };
 
-    fetchVenueData = function(id) {
-      const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
-      const fsqVenueId = id;
-      const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
-      const url = fsqPrefix + fsqVenueId + fsqSuffix;
-      fetch(url)
-        .then((resp) => resp.json())
-        .then(function(data) {
-          console.log(data);
-          const d = data.response.venue;
-          const fsqName = d.name;
-          // const fsqHours = d.hours.status;
-          const fsqCategory = d.categories[0].name;
-          const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
-          const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + d.name + '</a>';
-          const fsqTags = d.tags;
-          const fsq_urlStart = '<a href = "' + d.url + '">';
-          const fsq_urlEnd = '</a>';
-          const br = '<br>';
-          infoWindowContent('' + fsqTwitter + '');
-          console.log("the tags for" + fsqName + "are"  + fsqTags);
-          // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
-          // $('.nameHere').append(fsqCategory + br);
-          // $('.nameHere').append(fsqHours + br + fsqTags);
-          console.log(d.name);
-          return data;
-        })
-        .catch(error => console.warn(error));
-    };
+
+
+    // fetchVenueData = function(id) {
+      // const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
+      // const fsqVenueId = id;
+      // const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
+    //   const url = fsqPrefix + fsqVenueId + fsqSuffix;
+    //   fetch(url)
+    //     .then((resp) => resp.json())
+    //     .then(function(data) {
+    //       console.log(data);
+    //       const d = data.response.venue;
+    //       const fsqName = d.name;
+    //       // const fsqHours = d.hours.status;
+    //       const fsqCategory = d.categories[0].name;
+    //       const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
+    //       const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + d.name + '</a>';
+    //       const fsqTags = d.tags;
+    //       const fsq_urlStart = '<a href = "' + d.url + '">';
+    //       const fsq_urlEnd = '</a>';
+    //       const br = '<br>';
+    //       infoWindowContent('' + fsqTwitter + '');
+    //       console.log("the tags for" + fsqName + "are"  + fsqTags);
+    //       // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
+    //       // $('.nameHere').append(fsqCategory + br);
+    //       // $('.nameHere').append(fsqHours + br + fsqTags);
+    //       console.log(d.name);
+    //       return data;
+    //     })
+    //     .catch(error => console.warn(error));
+    // };
 
 
 //end of ViewModel
