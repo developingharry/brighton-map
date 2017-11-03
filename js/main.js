@@ -92,6 +92,7 @@ var ViewModel = function() {
           filterLocs();
           console.log('trying to add markers');
           addMarkers();
+          fitBounds();
           infowindow = new google.maps.InfoWindow();
           console.log('trying to add windows');
         })
@@ -112,6 +113,15 @@ var ViewModel = function() {
       });
     };
 
+    fitBounds = function() {
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i].getPosition());
+      }
+      map.fitBounds(bounds);
+    };
+
+
     makeMarker = function(loc,icon,id) {
       var latLng = new google.maps.LatLng(loc.lat, loc.lng);
       var marker = new google.maps.Marker({
@@ -121,7 +131,7 @@ var ViewModel = function() {
       });
       markers.push(marker);
       google.maps.event.addListener(marker, 'click', function(){
-        infowindow.setContent('loading info...');
+        infowindow.setContent('<img src = "images/Ajax-loader.gif"></img>');
         fetchVenueData(id);
         infowindow.close(); // Close previously opened infowindow
         infowindow.open(map, marker);
@@ -149,13 +159,15 @@ var ViewModel = function() {
         const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
         const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + twitterLogo + '</a>';
         const fsqCategory = d.categories[0].name;
+        const fsqHours = d.hours.status;
+        const fsqPrice = d.price.message;
         // const fsqTags = d.tags;
         const br = '<br>';
         //       // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
         //       // $('.nameHere').append(fsqCategory + br);
         //       // $('.nameHere').append(fsqHours + br + fsqTags);
         // newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br + fsqCategory + br + fsqHours + br + fsqTags;
-        newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br;
+        newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br + fsqCategory + br + fsqHours + fsqPrice;
         infowindow.setContent(newInfo);
         console.log(d);
       }).catch(function() {
