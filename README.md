@@ -26,6 +26,9 @@ I've taken the map information out of the initial api call, and put it into a va
 
 > To load the map, go to https://developingharry.github.io/brighton-map/.  Click "show menu" to show the list of locations, which you can then either filter individually, by clicking on them, or by category, with the buttons at the top.
 
+> Alternatively, you can download the repo here https://github.com/developingharry/brighton-map/archive/master.zip ,
+unzip it and open index.htm!
+
 >To see information about a location, click on its associated marker on the map.
 You will see the individual locations'
 * Homepage address

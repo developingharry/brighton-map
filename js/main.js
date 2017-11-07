@@ -11,17 +11,17 @@ var mapSettings = {
     lat: 50.8212148,
     lng: -0.13406340000005912,
     zoom: 18,
-    //this last setting hides the option to change layers
-    //(map/satellite). This was an aesthetic choice for
-    //menu placement.
+    /*this last setting hides the option to change layers
+    (map/satellite). This was an aesthetic choice for
+    menu placement.*/
     mapTypeControl: false,
-    //I've taken the data from google's own map styling wizard and
-    //minified it for the rest of the script's readability.
+    /*I've taken the data from google's own map styling wizard and
+    minified it for the rest of the script's readability.*/
     styles: [{elementType:"geometry",stylers:[{color:"#ebe3cd"}]},{elementType:"labels.text.fill",stylers:[{color:"#523735"}]},{elementType:"labels.text.stroke",stylers:[{color:"#f5f1e6"}]},{featureType:"administrative",elementType:"geometry.stroke",stylers:[{color:"#c9b2a6"}]},{featureType:"administrative.land_parcel",elementType:"geometry.stroke",stylers:[{color:"#dcd2be"}]},{featureType:"administrative.land_parcel",elementType:"labels.text.fill",stylers:[{color:"#ae9e90"}]},{featureType:"landscape.natural",elementType:"geometry",stylers:[{color:"#dfd2ae"}]},{featureType:"poi",elementType:"geometry",stylers:[{color:"#dfd2ae"}]},{featureType:"poi",elementType:"labels.text.fill",stylers:[{color:"#93817c"}]},{featureType:"poi.business",stylers:[{visibility:"off"}]},{featureType:"poi.park",elementType:"geometry.fill",stylers:[{color:"#a5b076"}]},{featureType:"poi.park",elementType:"labels.text.fill",stylers:[{color:"#447530"}]},{featureType:"road",elementType:"geometry",stylers:[{color:"#f5f1e6"}]},{featureType:"road.arterial",elementType:"geometry",stylers:[{color:"#fdfcf8"}]},{featureType:"road.highway",elementType:"geometry",stylers:[{color:"#f8c967"}]},{featureType:"road.highway",elementType:"geometry.stroke",stylers:[{color:"#e9bc62"}]},{featureType:"road.highway.controlled_access",elementType:"geometry",stylers:[{color:"#e98d58"}]},{featureType:"road.highway.controlled_access",elementType:"geometry.stroke",stylers:[{color:"#db8555"}]},{featureType:"road.local",elementType:"labels.text.fill",stylers:[{color:"#806b63"}]},{featureType:"transit.line",elementType:"geometry",stylers:[{color:"#dfd2ae"}]},{featureType:"transit.line",elementType:"labels.text.fill",stylers:[{color:"#8f7d77"}]},{featureType:"transit.line",elementType:"labels.text.stroke",stylers:[{color:"#ebe3cd"}]},{featureType:"transit.station",elementType:"geometry",stylers:[{color:"#dfd2ae"}]},{featureType:"water",elementType:"geometry.fill",stylers:[{color:"#b9d3c2"}]},{featureType:"water",elementType:"labels.text.fill",stylers:[{color:"#92998d"}]}]
 };
 
-//create map variable outside mapload function
-//so that it can also be used by marker function.
+/*create map variable outside mapload function
+so that it can also be used by marker function.*/
 var map;
 var infowindow;
 
@@ -80,19 +80,15 @@ var ViewModel = function() {
     toggleMarker = function() {
       // close all infowindows to keep things tidy
       infowindow.close();
-      // get visibility of marker and store it within an array
-      let markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
-      // set the marker visibility as appropriate when selected from list
-      markers[this.index].setVisible(markerVisibility);
-      // ...with a little drop animation.
-      markers[this.index].setAnimation(google.maps.Animation.DROP);
+      google.maps.event.trigger(markers[this.index], 'click');
+      markers[this.index].setAnimation(google.maps.Animation.BOUNCE);
     };
 
     toggleMarkerCategory = function(category) {
-      // it may seem more complicated than it needs
-      // to be, but that's so I cover the eventuality
-      // that one bar is hidden, for example,
-      // I don't then want that to toggle in inverse.
+      /* it may seem more complicated than it needs
+      to be, but that's so I cover the eventuality
+      that one bar is hidden, for example,
+      I don't then want that to toggle in inverse.*/
       switch(category) {
     case 'bar':
         // if I'm currently hiding bars in the list, hide their markers
@@ -112,11 +108,11 @@ var ViewModel = function() {
       }
     };
 
-    // separate function to process the given category,
-    // to avoid code duplication.
+    /* separate function to process the given category,
+     to avoid code duplication.*/
     markerToggler = function(category, toggleStatus) {
-      // loop through markers, setting visibility to
-      // status given in previous function.
+      /* loop through markers, setting visibility to
+      status given in previous function.*/
       for(var i = 0; i<markers.length; i++) {
         if(locations[i].category == category) {
           markers[i].setVisible(toggleStatus);
@@ -213,8 +209,8 @@ var ViewModel = function() {
         const fsq_urlStart = '<a href = "' + d.url + '" target="_blank">';
         // name of location
         const fsqName = d.name;
-        // end of url (this could probably all have been done more concisely, but I went for
-        // readability over concision).
+        /* end of url (this could probably all have been done more concisely, but I went for
+        readability over concision).*/
         const fsq_urlEnd = '</a>';
         // twitter logo from their branding website
         const twitterLogo = '<img src = "images/Twitter_Logo_Blue.png" class = "tinylogo"></img>';
