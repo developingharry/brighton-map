@@ -28,6 +28,7 @@ var infowindow;
 var ViewModel = function() {
     var self = this;
     // show all locations in menu by default
+    showTitle = ko.observable(true);
     showBars = ko.observable(true);
     showCafes = ko.observable(true);
     //initially hide list pane
@@ -66,6 +67,9 @@ var ViewModel = function() {
 
     //function to reveal list, triggered by click
     toggleList = function() {
+        if(showTitle()){
+          showTitle(false);
+        }
         // close all infowindows to keep things tidy
         infowindow.close();
         // toggle visibility of list

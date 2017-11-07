@@ -30,7 +30,6 @@
             rel="stylesheet">
         <!-- custom stylesheet -->
         <link rel="stylesheet" type="text/css" href="css/styles.css">
-        <!-- TODO change stylesheet back to styles.css -->
         <title></title>
     </head>
     <body>
@@ -38,12 +37,22 @@
             <div id="menu">
                 <!-- only show menu content if menu has been toggled open -->
                 <div data-bind="if: listIsVisible">
-                    <form action="">
-                        <!-- checkboxes to filter locations -->
-                        <div class="showHide">Show/Hide</div>
-                        <div class="toggleLabel">Bars<input type="checkbox" data-bind="click: toggleBars, checked: showBars"></div>
-                        <div class="toggleLabel">Cafes<input type="checkbox" data-bind="click: toggleCafes, checked: showCafes"></div>
-                    </form>
+                    <!-- toggles for the different categorys, styles with google's material design
+                    lite -->
+                    <div class="toggleLabel">Bars
+                        <button
+                            data-bind="click: toggleBars"
+                            class="myButton mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                            <i data-bind="visible: showBars" class="material-icons">done</i>
+                        </button>
+                    </div>
+                    <div class="toggleLabel">Cafes
+                        <button
+                            data-bind="click: toggleCafes"
+                            class="myButton mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                            <i data-bind="visible: showCafes" class="material-icons">done</i>
+                        </button>
+                    </div>
                     <hr>
                     <!-- only show bars if filter allows -->
                     <div class="category" data-bind="visible: showBars">Bars</div>
@@ -60,11 +69,15 @@
                             data-bind="visible: showCafes, click: toggleMarker, text: name"></div>
                     </div>
                 </div>
+                <!-- splash screen, which will disappear permanently once the menu is opened. -->
+                <p data-bind="if: showTitle" class = "myTitle">A map of my favourite</br>places in Brighton</p>
                 <!-- button to show/hide menu -->
                 <button
                     data-bind="click: toggleList, text: listIsVisible() ? 'Hide Menu' : 'Show Menu'"
-                    class="myButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"></button>
-                <div class = "credit" data-bind="if: listIsVisible"><hr>Information provided by<br><a href = 'https://foursquare.com/' target = "_blank">FourSquare©</a></div>
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"></button>
+                <div class="credit" data-bind="if: listIsVisible"><hr>Information provided by<br>
+                    <a href='https://foursquare.com/' target="_blank">FourSquare©</a>
+                </div>
             </div>
             <!-- div for the google maps api -->
             <div id="map"></div>
