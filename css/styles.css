@@ -1,44 +1,63 @@
 html,
 body {
-  font-family: Arial, sans-serif;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: black;
 }
 
 #container {
-  position: relative;
+    position: relative;
 }
 
-#navpane {
-  position:absolute;
-  opacity: 0.8;
-  /*width: 20vh;*/
-  background-color: white;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  border-bottom-right-radius: 25px;
-  z-index: 1;
+#menu {
+    position: absolute;
+    opacity: 0.85;
+    z-index: 1;
+    background-color: #b0f442;
+}
+
+.parent {
+  /*size of first line of infowindow*/
+  height: 5vh;
 }
 
 .tinylogo {
-  width: 5vw;
+    height: 100%;
 }
 
 #map {
-  height: 100vh;
-
+    height: 100vh;
 }
 
-.nav-item {
-  margin-left: 10px;
-  margin-top: 10px;
+.showHide {
+    /*the show/hide label for the toggles*/
 }
 
-.button-header {
-text-align: center;
+.toggleLabel {
+    /*the label for the toggles, obviously*/
 }
 
 .category {
-  color: green;
+    text-shadow: 2px 2px #90EE90;
+}
+
+.locName {
+    /*the menu entry for each location*/
+}
+
+.myButton {
+    /*the toggle button to hide menu*/
+}
+
+.cafe {
+    font-family: 'Poiret One', cursive;
+}
+
+.bar {
+    font-family: 'Permanent Marker', cursive;
 }

@@ -1,43 +1,76 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- header boilerplate -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- end of header boilerplate -->
+        <!-- knockout -->
         <script
             type='text/javascript'
             src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+        <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- material design lite framework from google (https://getmdl.io/)-->
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link
+            rel="stylesheet"
+            href="https://code.getmdl.io/1.3.0/material.light_green-lime.min.css">
+        <script defer="defer" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+        <!-- google's "poiret one" font -->
+        <link
+            href="https://fonts.googleapis.com/css?family=Poiret+One"
+            rel="stylesheet">
+        <!-- google's "permanent marker" font -->
+        <link
+            href="https://fonts.googleapis.com/css?family=Permanent+Marker"
+            rel="stylesheet">
+        <!-- custom stylesheet -->
         <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <!-- TODO change stylesheet back to styles.css -->
         <title></title>
     </head>
     <body>
-        <div class="container">
-            <div id="navpane">
-                <div class="nav-item" data-bind="if: listIsVisible">
-                    <b class = "manu-header">Locations</b>
-                    <div class ="category" data-bind = "visible: showBars">Bars</div>
-                    <div data-bind="foreach: bars">
-                      <div class="navObj" data-bind="visible: showBars, click: toggleMarker, text: name"></div>
-                    </div>
-                    <div class ="category" data-bind = "visible: showCafes">Cafes</div>
-                    <div data-bind="foreach: cafes">
-                      <div class="navObj" data-bind="visible: showCafes, click: toggleMarker, text: name"></div>
-                    </div>
+        <div>
+            <div id="menu">
+                <!-- only show menu content if menu has been toggled open -->
+                <div data-bind="if: listIsVisible">
+                    <form action="">
+                        <!-- checkboxes to filter locations -->
+                        <div class="showHide">Show/Hide</div>
+                        <div class="toggleLabel">Bars<input type="checkbox" data-bind="click: toggleBars, checked: showBars"></div>
+                        <div class="toggleLabel">Cafes<input type="checkbox" data-bind="click: toggleCafes, checked: showCafes"></div>
+                    </form>
                     <hr>
-                    <div class = "button-header">Toggles</div>
-                  <button  class = "nav-item" data-bind = "click: toggleBars">Bars</button>
-                  <button  class = "nav-item" data-bind = "click: toggleCafes">Cafes</button>
-                  <hr>
+                    <!-- only show bars if filter allows -->
+                    <div class="category" data-bind="visible: showBars">Bars</div>
+                    <div data-bind="foreach: bars">
+                        <div
+                            class="bar locName"
+                            data-bind="visible: showBars, click: toggleMarker, text: name"></div>
+                    </div>
+                    <!-- only show cafes if filter allows -->
+                    <div class="category" data-bind="visible: showCafes">Cafes</div>
+                    <div data-bind="foreach: cafes">
+                        <div
+                            class="cafe locName"
+                            data-bind="visible: showCafes, click: toggleMarker, text: name"></div>
+                    </div>
                 </div>
-                <div class = "button-header">
-                  <button class="nav-item button-header" data-bind="click: toggleList">Show/Hide Menu</button>
-                </div>
+                <!-- button to show/hide menu -->
+                <button
+                    data-bind="click: toggleList, text: listIsVisible() ? 'Hide Menu' : 'Show Menu'"
+                    class="myButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"></button>
             </div>
+            <!-- div for the google maps api -->
             <div id="map"></div>
         </div>
+        <!-- my data model -->
         <script type='text/javascript' src='js/data.js'></script>
-
+        <!-- my viewmodel -->
         <script type='text/javascript' src='js/main.js'></script>
     </body>
 </html>

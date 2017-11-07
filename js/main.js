@@ -27,26 +27,30 @@ var infowindow;
 
 var ViewModel = function() {
     var self = this;
+    // show all locations in menu by default
     showBars = ko.observable(true);
     showCafes = ko.observable(true);
     //initially hide list pane
     listIsVisible = ko.observable(false);
 
     toggleBars = function() {
-      console.log('trying to toggle bars');
+      //show or hide the bars in the list
       showBars(!showBars());
+      //toggle all bar markers
       toggleMarkerCategory('bar');
     };
 
     toggleCafes = function() {
-      console.log('toggling Cafes');
+      //show or hide the cafes in the list
       showCafes(!showCafes());
+      // toggle all cafe markers
       toggleMarkerCategory('coffeebar');
     };
 
-
     filterLocs = function() {
       let index = 0;
+      // loop through all locations, pushing each
+      // category into its own array (seems reasonably scaleable to me)
       for(var i = 0; i < locations.length; i++) {
         if(locations[i].category == 'bar') {
           locations[i].index = index;
@@ -62,46 +66,58 @@ var ViewModel = function() {
 
     //function to reveal list, triggered by click
     toggleList = function() {
+        // close all infowindows to keep things tidy
         infowindow.close();
+        // toggle visibility of list
         listIsVisible(!listIsVisible());
     };
 
-    //work in progress - toggles markers on click ok, but doesn't close their infoWindows
+    // function to show/hide marker when selected from list
     toggleMarker = function() {
+      // close all infowindows to keep things tidy
       infowindow.close();
+      // get visibility of marker and store it within an array
       let markerVisibility = (markers[this.index].getVisible() == true) ?  false : true;
+      // set the marker visibility as appropriate when selected from list
       markers[this.index].setVisible(markerVisibility);
-      console.log(this.index);
+      // ...with a little drop animation.
+      markers[this.index].setAnimation(google.maps.Animation.DROP);
     };
 
     toggleMarkerCategory = function(category) {
-
+    // loop through the markers, toggling visibility of those who match the category
       for(var i = 0; i<markers.length; i++) {
           let markerVisibility = (markers[i].getVisible() == true) ?  false : true;
           console.log (markers[i].category);
           if(locations[i].category == category) {
             markers[i].setVisible(markerVisibility);
+            markers[i].setAnimation(google.maps.Animation.DROP);
           }
       }
     };
+
     startup = function() {
+      //load up the map api
       $.getScript(mapScript)
         .done(function() {
-          console.log('trying to initialise map');
+          // render the map on the page
           initMap();
+          //separate locations into category arrays and drop markers in for them
           filterLocs();
-          console.log('trying to add markers');
           addMarkers();
+          //extend bounds of map to cover all markers
           fitBounds();
+          // assign definition to infowindow, now that script is loaded, to avoid errors
           infowindow = new google.maps.InfoWindow();
-          console.log('trying to add windows');
         })
       .fail(function() {
+        //error message
         alert('Apologies, dear user, there appears to be a problem loading the Google Maps API.\n\nPlease try again later.');
       });
     };
 
     initMap = function() {
+      //map initialisation based on mapSettings variable
       map = new google.maps.Map(document.getElementById('map'), {
         center: {
           lat: mapSettings.lat,
@@ -114,6 +130,7 @@ var ViewModel = function() {
     };
 
     fitBounds = function() {
+      //set bounds based on marker location
       var bounds = new google.maps.LatLngBounds();
       for (var i = 0; i < markers.length; i++) {
         bounds.extend(markers[i].getPosition());
@@ -121,92 +138,76 @@ var ViewModel = function() {
       map.fitBounds(bounds);
     };
 
-
     makeMarker = function(loc,icon,id) {
+      //marker generation function
       var latLng = new google.maps.LatLng(loc.lat, loc.lng);
       var marker = new google.maps.Marker({
         position : latLng,
         map : map,
-        icon : icon
+        icon : icon,
+        animation: google.maps.Animation.DROP
       });
       markers.push(marker);
       google.maps.event.addListener(marker, 'click', function(){
+        // make marker bounce once when clicked
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){marker.setAnimation(null);},750);
+        //load 'loading' indicator for while api data comes in for infowindow
         infowindow.setContent('<img src = "images/Ajax-loader.gif"></img>');
+        //get data based on fourSquare ID
         fetchVenueData(id);
-        infowindow.close(); // Close previously opened infowindow
+         // Close previously opened infowindows
+        infowindow.close();
         infowindow.open(map, marker);
       });
     };
 
     addMarkers = function() {
+      // make a marker for each location in array
       for(var i=0; i<locations.length; i++) {
         makeMarker(locations[i], locations[i].icon, locations[i].venue_id);
       }
     };
-    var infoWindowContent = ko.observable('if you can see this I messed up');
 
     fetchVenueData = function(id) {
+      //set url of data to fetch from FourSquare
       const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
       const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
       const url = fsqPrefix + id + fsqSuffix;
       fetch(url).then(function(response) {
+        // convert response to json
         return response.json();
       }).then(function(data) {
+        // helper variable to abbreviate response for use elsewhere
         const d = data.response.venue;
-        const fsq_urlStart = '<a href = "' + d.url + '">';
+        // start of the url of the location's website
+        const fsq_urlStart = '<a href = "' + d.url + '" target="_blank">';
+        // name of location
         const fsqName = d.name;
+        // end of url (this could probably all have been done more concisely, but I went for
+        // readability over concision).
         const fsq_urlEnd = '</a>';
-        const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
-        const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + twitterLogo + '</a>';
+        // twitter logo from their branding website
+        const twitterLogo = '<img src = "images/Twitter_Logo_Blue.png" class = "tinylogo"></img>';
+        // twitter url for each location
+        const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '" target="_blank">' + twitterLogo + '</a>';
+        // category of location
         const fsqCategory = d.categories[0].name;
+        // opening hours of location
         const fsqHours = d.hours.status;
+        // general price range of items at location
         const fsqPrice = d.price.message;
-        // const fsqTags = d.tags;
-        const br = '<br>';
-        //       // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
-        //       // $('.nameHere').append(fsqCategory + br);
-        //       // $('.nameHere').append(fsqHours + br + fsqTags);
-        // newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br + fsqCategory + br + fsqHours + br + fsqTags;
-        newInfo = fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br + fsqCategory + br + fsqHours + fsqPrice;
-        infowindow.setContent(newInfo);
-        console.log(d);
+        // 1st-4th lines of the infoWindow
+        let firstLine = '<div class="parent">' + fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + '</div>';
+        let secondLine = '<div class="locDetails">' + fsqCategory + '</div>';
+        let thirdLine = '<div class="locDetails">' + fsqHours + '</div>';
+        let fourthLine = '<div class="locDetails">Price: ' + fsqPrice + '</div>';
+        infowindow.setContent(firstLine + secondLine + thirdLine + fourthLine);
       }).catch(function() {
-        console.log("Booo");
+        // error message for if the fourSquare api call fails.
+        infowindow.setContent('There appears to have been a problem<br>connecting to the FourSquare servers.');
       });
     };
-
-
-
-    // fetchVenueData = function(id) {
-      // const fsqPrefix = 'https://api.foursquare.com/v2/venues/';
-      // const fsqVenueId = id;
-      // const fsqSuffix = '?client_id=QMLLVFQXWDAXQAVRJCCHJBDJZF4KNA0E3V4MZIKU4JCSO0KQ&client_secret=HZIP1WQ4TCBAY3VQIG4SWQYJIOFT3CADVSR3BU4QXJIJWIST&v=20171010';
-    //   const url = fsqPrefix + fsqVenueId + fsqSuffix;
-    //   fetch(url)
-    //     .then((resp) => resp.json())
-    //     .then(function(data) {
-    //       console.log(data);
-    //       const d = data.response.venue;
-    //       const fsqName = d.name;
-    //       // const fsqHours = d.hours.status;
-    //       const fsqCategory = d.categories[0].name;
-    //       const twitterLogo = '<img src = "https://static.dezeen.com/uploads/2012/06/dezeen_twitter-bird.gif" class = "tinylogo"></img>';
-    //       const fsqTwitter = '<a href="https://twitter.com/' + d.contact.twitter + '">' + d.name + '</a>';
-    //       const fsqTags = d.tags;
-    //       const fsq_urlStart = '<a href = "' + d.url + '">';
-    //       const fsq_urlEnd = '</a>';
-    //       const br = '<br>';
-    //       infoWindowContent('' + fsqTwitter + '');
-    //       console.log("the tags for" + fsqName + "are"  + fsqTags);
-    //       // $('.nameHere').append(fsq_urlStart + fsqName + fsq_urlEnd + fsqTwitter + br);
-    //       // $('.nameHere').append(fsqCategory + br);
-    //       // $('.nameHere').append(fsqHours + br + fsqTags);
-    //       console.log(d.name);
-    //       return data;
-    //     })
-    //     .catch(error => console.warn(error));
-    // };
-
 
 //end of ViewModel
 startup();
