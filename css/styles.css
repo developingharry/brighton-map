@@ -61,6 +61,7 @@ a {
 .locName {
     font-size: 2.5vh;
     line-height: 2.5vh;
+    margin: 20px;
     /*the menu entry for each location*/
 }
 
