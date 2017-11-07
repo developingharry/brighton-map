@@ -5,7 +5,7 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 0,
-        venue_id: '4fd1ec0be4b0d4fb7410a454'
+        venue_id: '53089ca3498e841da1606cbf'
     },
     {
         name: 'Costa Coffee',
@@ -14,7 +14,7 @@ var locations = [{
         category: 'coffeebar',
         icon: 'images/coffee.png',
         index: 1,
-        venue_id: '4bdee4f3ffdec9289dfbe9a1'
+        venue_id: '4bd82d25dc4b95216f7b7888'
     },
     {
         name: 'Starbucks',
@@ -32,7 +32,7 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 3,
-        venue_id: '53089ca3498e841da1606cbf',
+        venue_id: '4e7f3aacb63474966618a431',
     },
     {
         name: 'The Craft Beer Co.',
