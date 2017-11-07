@@ -32,7 +32,7 @@ var locations = [{
         category: 'bar',
         icon: 'images/beer.png',
         index: 3,
-        venue_id: '53089ca3498e841da1606cbf',
+        venue_id: '4e7f3aacb63474966618a431',
     },
     {
         name: 'The Craft Beer Co.',
