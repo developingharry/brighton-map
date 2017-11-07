@@ -33,6 +33,9 @@ a {
 #map {
     height: 100vh;
 }
+.credit {
+  font-style: italic;
+}
 
 .showHide {
     /*the show/hide label for the toggles*/

@@ -85,14 +85,39 @@ var ViewModel = function() {
     };
 
     toggleMarkerCategory = function(category) {
-    // loop through the markers, toggling visibility of those who match the category
+      // it may seem more complicated than it needs
+      // to be, but that's so I cover the eventuality
+      // that one bar is hidden, for example,
+      // I don't then want that to toggle in inverse.
+      switch(category) {
+    case 'bar':
+        // if I'm currently hiding bars in the list, hide their markers
+        if(!showBars()){
+          markerToggler(category, false);
+        } else {
+          markerToggler(category, true);
+        }
+        break;
+    case 'coffeebar':
+        if(!showCafes()){
+          markerToggler(category, false);
+        } else {
+          markerToggler(category, true);
+        }
+        break;
+      }
+    };
+
+    // separate function to process the given category,
+    // to avoid code duplication.
+    markerToggler = function(category, toggleStatus) {
+      // loop through markers, setting visibility to
+      // status given in previous function.
       for(var i = 0; i<markers.length; i++) {
-          let markerVisibility = (markers[i].getVisible() == true) ?  false : true;
-          console.log (markers[i].category);
-          if(locations[i].category == category) {
-            markers[i].setVisible(markerVisibility);
-            markers[i].setAnimation(google.maps.Animation.DROP);
-          }
+        if(locations[i].category == category) {
+          markers[i].setVisible(toggleStatus);
+          markers[i].setAnimation(google.maps.Animation.DROP);
+        }
       }
     };
 

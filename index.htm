@@ -64,6 +64,7 @@
                 <button
                     data-bind="click: toggleList, text: listIsVisible() ? 'Hide Menu' : 'Show Menu'"
                     class="myButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"></button>
+                <div class = "credit" data-bind="if: listIsVisible"><hr>Information provided by<br><a href = 'https://foursquare.com/' target = "_blank">FourSquare©</a></div>
             </div>
             <!-- div for the google maps api -->
             <div id="map"></div>
