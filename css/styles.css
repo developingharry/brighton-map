@@ -42,6 +42,7 @@ a {
 
 .credit {
     font-style: italic;
+    font-height: 1vh;
 }
 
 .showHide {
@@ -59,6 +60,7 @@ a {
 
 .locName {
     font-size: 2.5vh;
+    line-height: 2.5vh;
     /*the menu entry for each location*/
 }
 
